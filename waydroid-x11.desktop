@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Waydroid X11
+Comment=Waydroid on X11 using Weston
+Exec=waydroid-x11
+Icon=waydroid
+Terminal=false
+Type=Application
+Categories=X-WayDroid-App;
+Keywords=waydroid;x11;weston;android;container;

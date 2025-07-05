@@ -1,0 +1,67 @@
+#!/bin/bash
+# This file is part of waydroid-installer.
+# Licensed under the GNU General Public License v3.0
+# See the LICENSE file in the root of this repository.
+
+# Function to launch Waydroid inside Weston on X11
+run() {
+sleep 2
+
+export WAYLAND_DISPLAY=waydroid-x11
+
+waydroid session start &
+WAYDROID_PID=$!
+waydroid show-full-ui &
+
+trap "waydroid session stop; kill $WESTON_PID; kill $WAYDROID_PID" EXIT
+wait $WESTON_PID
+}
+
+if [ $# -eq 1 ]; then
+	if [[ "$1" == -h || "$1" == "--help" ]]; then
+		echo "This script launches Waydroid on X11 using Weston."
+		echo
+		echo "Options:"
+  		echo "--mobile"
+      		echo "  Launches Weston in a mobile-sized window (width=400, height=800)."
+		echo "--fullscreen"
+		echo "  Launches Weston in a fullscreen mode."
+
+  		echo "--width=<width> --height=<height>"
+      		echo "  Specifies a custom window size."
+
+  		echo "-h, --help"
+      		echo "	  Displays this help message."
+
+	elif [[ "$1" == "--mobile" ]]; then
+		weston --socket=waydroid-x11 --width=400 --height=800 &
+		WESTON_PID=$!
+		run
+	elif [[ "$1" == "--fullscreen" ]]; then
+		weston --socket=waydroid-x11 $1
+		WESTON_PID=$!
+		run
+	else
+		weston --socket=waydroid-x11 --width=1920 --height=1080 &
+		WESTON_PID=$!
+		run
+	fi
+elif [ $# -eq "2" ]; then
+	if [[ $1 == --width=* && $2 == --height=* ]]; then
+		weston --socket=waydroid-x11 $1 $2 &
+		WESTON_PID=$!
+		run
+	else
+		weston --socket=waydroid-x11 --width=1920 --height=1080 &
+		WESTON_PID=$!
+		run
+	fi
+elif [[ $# -eq 0 || $# == " " ]]; then
+	weston --socket=waydroid-x11 --width=1920 --height=1080 &
+	WESTON_PID=$!
+	run
+else
+	weston --socket=waydroid-x11 --width=1920 --height=1080 &
+	WESTON_PID=$!
+	run
+fi
