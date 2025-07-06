@@ -10,7 +10,7 @@ clear
 
 
 if [[ -z "$SUDO_LOOP_PID" ]]; then
-    sudo -v || { echo; echo 'the script must be run as sudo!'; echo "Please enter a correct password"; exit 2; }
+    sudo -v || { echo; echo "This script requires sudo privileges."; exit 2; }
 
     (
         while true; do
